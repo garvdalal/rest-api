@@ -1,0 +1,44 @@
+app = Flask(__name__)
+# In-memory storage for demo
+items = []
+
+@app.route('/items', methods=['GET'])
+def get_items():
+    return jsonify(items)
+
+@app.route('/items', methods=['POST'])
+def add_item():
+    data = request.get_json()
+    item = {
+        'id': len(items) + 1,
+        'name': data.get('name', 'Unnamed'),
+        'description': data.get('description', '')
+    }
+    items.append(item)
+    return jsonify(item), 201
+
+def run_api_server():
+    print("Starting Flask API server on http://127.0.0.1:5000")
+    app.run(debug=True)
+
+# ----------------------------
+# Main CLI entry point
+# ----------------------------
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python high_level_python_projects.py [crawl|serve]")
+        sys.exit(1)
+
+    command = sys.argv[1].lower()
+
+    if command == "crawl":
+        pages = run_crawler()
+        analyze_web_data(pages)
+
+    elif command == "serve":
+        run_api_server()
+
+    else:
+        print(f"Unknown command: {command}")
+        print("Available commands: crawl, serve")
